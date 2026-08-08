@@ -221,6 +221,55 @@ export default function ProductDetail({ product }: ProductDetailProps) {
               {product.description || "این بازی با بهترین متریال و کلی عشق طراحی شده تا هم امن باشه، هم بادوام و هم پر از خنده!"}
             </p>
 
+            {/* Product Specifications */}
+            {(product.brand || product.material || product.age_range_display || product.category) && (
+              <div className="mb-8 bg-sunny/5 rounded-2xl p-5 border border-sunny/20">
+                <h3 className="mb-4 text-sm font-bold text-ink">ویژگی‌های محصول</h3>
+                <div className="grid grid-cols-2 gap-y-3 gap-x-4 text-sm">
+                  {product.category && (
+                    <>
+                      <span className="text-inkSoft">دسته‌بندی</span>
+                      <span className="font-bold text-ink">{product.category.name}</span>
+                    </>
+                  )}
+
+                  {product.brand && (
+                    <>
+                      <span className="text-inkSoft">برند</span>
+                      <span className="font-bold text-ink">{product.brand}</span>
+                    </>
+                  )}
+
+                  {product.material && (
+                    <>
+                      <span className="text-inkSoft">جنس</span>
+                      <span className="font-bold text-ink">{product.material}</span>
+                    </>
+                  )}
+
+                  {product.age_range_display && (
+                    <>
+                      <span className="text-inkSoft">رده سنی</span>
+                      <span className="font-bold text-ink">{product.age_range_display}</span>
+                    </>
+                  )}
+
+                  <span className="text-inkSoft">استاندارد ایمنی</span>
+                  <span
+                    className={`font-bold flex items-center gap-1 ${product.safety_certified ? "text-[#3f8a4c]" : "text-inkSoft"
+                      }`}
+                  >
+                    {product.safety_certified ? "دارد ✅" : "ندارد"}
+                  </span>
+
+                  <span className="text-inkSoft">موجودی کل</span>
+                  <span className="font-bold text-ink">
+                    {product.stock > 0 ? `${product.stock.toLocaleString("fa-IR")} عدد` : "ناموجود"}
+                  </span>
+                </div>
+              </div>
+            )}
+
             {/* Color Selector */}
             {availableColors.length > 0 && (
               <div className="mb-6">

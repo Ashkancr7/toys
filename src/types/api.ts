@@ -30,6 +30,9 @@ export interface ProductImage {
   image: string;
 }
 
+// رده‌های سنی ممکن (باید با AGE_RANGE_CHOICES بک‌اند هماهنگ باشه)
+export type AgeRange = "0-2" | "3-5" | "6-8" | "9-12" | "12+";
+
 export interface Product {
   id: number;
   category: Category;
@@ -46,4 +49,14 @@ export interface Product {
 
   created_at: string;
   variants: ProductVariant[];
+
+  // موجودی کل محصول (جدا از موجودی هر variant)
+  stock: number;
+
+  // ===== ویژگی‌های اختصاصی اسباب‌بازی =====
+  brand?: string | null;
+  material?: string | null;
+  age_range?: AgeRange | null;
+  age_range_display?: string | null;
+  safety_certified: boolean;
 }

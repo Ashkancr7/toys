@@ -2,11 +2,9 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
 import ProductCard from '@/components/product/ProductCard';
-
 import { Product } from '@/types/api';
 import { getProducts, getCategories } from '@/lib/api';
-
-
+import { SearchX, RotateCcw } from 'lucide-react';
 
 export default function ShopPage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -52,6 +50,11 @@ export default function ShopPage() {
     return result;
   }, [activeCategory, sortBy, products]);
 
+  const resetFilters = () => {
+    setActiveCategory("All");
+    setSortBy("default");
+  };
+
   if (isLoading) {
     return (
       <div className="mx-auto max-w-7xl px-4 py-8">
@@ -93,11 +96,18 @@ export default function ShopPage() {
     );
   }
 
+  const hasActiveFilters = activeCategory !== "All" || sortBy !== "default";
+
   return (
     <div className="container mx-auto p-4 max-w-7xl pt-8 pb-16">
-      <h1 className="text-3xl font-display font-extrabold mb-8 text-right text-ink">
-        فروشگاه <span className="text-bubblegum">ولورا</span> 🧸
-      </h1>
+      <div className="mb-8">
+        <h1 className="text-3xl font-display font-extrabold text-right text-ink">
+          فروشگاه <span className="text-bubblegum">ولورا</span> 🧸
+        </h1>
+        <p className="text-inkSoft text-sm mt-1 font-medium">
+          هزاران اسباب‌بازی رنگی و بامزه رو اینجا پیدا کن
+        </p>
+      </div>
 
       {/* کانتینر اصلی: سایدبار + گرید محصولات */}
       <div className="flex flex-col lg:flex-row gap-8">
@@ -105,9 +115,20 @@ export default function ShopPage() {
         {/* ===================== سایدبار دسته‌بندی‌ها ===================== */}
         <aside className="w-full lg:w-1/4 xl:w-1/5 shrink-0">
           <div className="lg:sticky lg:top-24 bg-white p-4 lg:p-6 rounded-[1.75rem] shadow-card border-2 border-sunny/20">
-            <h3 className="font-display font-extrabold text-lg mb-4 text-ink hidden lg:block border-b-2 border-sunny/20 pb-3">
-              🎲 دسته‌بندی‌ها
-            </h3>
+            <div className="hidden lg:flex items-center justify-between mb-4 border-b-2 border-sunny/20 pb-3">
+              <h3 className="font-display font-extrabold text-lg text-ink">
+                🎲 دسته‌بندی‌ها
+              </h3>
+              {hasActiveFilters && (
+                <button
+                  onClick={resetFilters}
+                  className="flex items-center gap-1 text-xs font-bold text-bubblegum hover:text-[#ff5c82] transition-colors"
+                >
+                  <RotateCcw className="h-3.5 w-3.5" />
+                  حذف فیلتر
+                </button>
+              )}
+            </div>
 
             <div className="flex lg:flex-col gap-2 overflow-x-auto lg:overflow-visible pb-2 lg:pb-0 hide-scrollbar">
               <button
@@ -142,11 +163,14 @@ export default function ShopPage() {
         <main className="flex-1 w-full">
 
           <div className="flex flex-row justify-between items-center mb-6 bg-white p-3 lg:p-4 rounded-[1.75rem] shadow-card border-2 border-sunny/20">
-            <p className="text-inkSoft text-sm hidden sm:block font-bold">
+            <p className="text-inkSoft text-xs sm:text-sm font-bold">
               نمایش <span className="text-bubblegum font-display">{filteredAndSortedProducts.length}</span> بازی
+              {activeCategory !== "All" && (
+                <span className="text-inkSoft font-medium"> در «{activeCategory}»</span>
+              )}
             </p>
 
-            <div className="w-full sm:w-auto">
+            <div className="w-auto sm:w-auto flex items-center gap-2">
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
@@ -156,14 +180,43 @@ export default function ShopPage() {
                 <option value="price-asc">ارزان‌ترین به گران‌ترین</option>
                 <option value="price-desc">گران‌ترین به ارزان‌ترین</option>
               </select>
+
+              {hasActiveFilters && (
+                <button
+                  onClick={resetFilters}
+                  className="lg:hidden shrink-0 p-2.5 rounded-2xl bg-cream border-2 border-sky/20 text-inkSoft hover:text-bubblegum hover:border-bubblegum/40 transition-colors"
+                  aria-label="حذف فیلتر"
+                >
+                  <RotateCcw className="h-4 w-4" />
+                </button>
+              )}
             </div>
           </div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">
-            {filteredAndSortedProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
+          {filteredAndSortedProducts.length > 0 ? (
+            <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">
+              {filteredAndSortedProducts.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center text-center py-20 bg-white rounded-[1.75rem] border-2 border-dashed border-sunny/30">
+              <SearchX className="h-12 w-12 text-inkSoft/40 mb-3" />
+              <p className="text-ink font-display font-bold text-lg mb-1">
+                بازی‌ای پیدا نشد!
+              </p>
+              <p className="text-inkSoft text-sm mb-5">
+                در این دسته‌بندی فعلاً محصولی موجود نیست.
+              </p>
+              <button
+                onClick={resetFilters}
+                className="btn-pop inline-flex items-center gap-2 rounded-full bg-bubblegum text-white font-display font-bold px-6 py-3 hover:bg-[#ff5c82] transition-colors"
+              >
+                <RotateCcw className="h-4 w-4" />
+                نمایش همه بازی‌ها
+              </button>
+            </div>
+          )}
         </main>
       </div>
     </div>

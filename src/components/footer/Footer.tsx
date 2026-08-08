@@ -1,5 +1,7 @@
+"use client";
 import Link from "next/link";
 import Image from "next/image";
+import { Mail, Phone, ArrowUp } from "lucide-react";
 
 export default function Footer() {
   return (
@@ -12,6 +14,39 @@ export default function Footer() {
             fill="#3A3358"
           />
         </svg>
+      </div>
+
+      {/* NEWSLETTER BAND */}
+      <div className="border-b border-white/10">
+        <div className="max-w-7xl mx-auto px-6 py-8 flex flex-col md:flex-row items-center justify-between gap-5">
+          <div className="text-center md:text-right">
+            <h3 className="font-display font-extrabold text-lg flex items-center justify-center md:justify-start gap-2">
+              <span className="text-2xl">💌</span>
+              از تخفیف‌ها و بازی‌های جدید باخبر شو
+            </h3>
+            <p className="text-gray-400 text-sm mt-1">
+              ایمیلت رو بذار، خبر اسباب‌بازی‌های جدید رو اول از همه بگیر
+            </p>
+          </div>
+
+          <form
+            className="flex w-full md:w-auto items-center gap-2"
+            onSubmit={(e) => e.preventDefault()}
+          >
+            <input
+              type="email"
+              placeholder="ایمیل شما"
+              required
+              className="flex-1 md:w-64 px-4 py-3 rounded-full bg-white/10 border-2 border-white/10 text-sm placeholder:text-gray-400 outline-none focus:border-sunny/60 transition-colors"
+            />
+            <button
+              type="submit"
+              className="btn-pop shrink-0 rounded-full bg-sunny text-ink font-display font-bold px-5 py-3 text-sm hover:bg-sunny/90 transition-colors"
+            >
+              عضویت
+            </button>
+          </form>
+        </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-6 py-16 grid grid-cols-2 md:grid-cols-5 gap-x-8 gap-y-12">
@@ -33,6 +68,18 @@ export default function Footer() {
           <p className="text-gray-300 text-sm leading-relaxed max-w-xs">
             دنیایی پر از رنگ، بازی و خنده! هر اسباب‌بازی اینجا با عشق و برای شاد کردن کوچولوهای شما انتخاب شده.
           </p>
+
+          {/* اطلاعات تماس سریع */}
+          <div className="flex flex-col gap-2.5 mt-5 text-sm text-gray-300">
+            <a href="tel:+989910616048" className="flex items-center gap-2 hover:text-sunny transition-colors w-fit" dir="ltr">
+              <Phone className="h-4 w-4 shrink-0" />
+              <span dir="ltr">0991 061 6048</span>
+            </a>
+            <a href="mailto:support@theveloura.ir" className="flex items-center gap-2 hover:text-sunny transition-colors w-fit">
+              <Mail className="h-4 w-4 shrink-0" />
+              support@theveloura.ir
+            </a>
+          </div>
         </div>
 
         {/* Shop */}
@@ -118,7 +165,7 @@ export default function Footer() {
       </div>
 
       {/* Bottom Bar */}
-      <div className="border-t border-white/10 bg-[#2E2A47]">
+      <div className="border-t border-white/10 bg-[#2E2A47] relative">
         <div className="max-w-7xl mx-auto px-6 py-6 flex flex-col md:flex-row items-center justify-between gap-4 text-center text-gray-400 text-xs tracking-wider">
           <p>© {new Date().getFullYear()} Veloura — ساخته شده با 💛 برای کوچولوها</p>
           <div className="flex gap-4 text-[11px] text-gray-400">
@@ -127,6 +174,15 @@ export default function Footer() {
             <span className="hover:text-sunny cursor-pointer transition-colors">نکست‌پی</span>
           </div>
         </div>
+
+        {/* دکمه بازگشت به بالا */}
+        <a
+          href="#top"
+          aria-label="بازگشت به بالا"
+          className="absolute -top-6 left-6 w-12 h-12 rounded-full bg-bubblegum text-white flex items-center justify-center shadow-popSm hover:bg-[#ff5c82] hover:-translate-y-1 transition-all"
+        >
+          <ArrowUp className="h-5 w-5" />
+        </a>
       </div>
     </footer>
   );
