@@ -16,7 +16,7 @@ export default function RegisterPage() {
     setError("");
 
     try {
-      const res = await fetch("https://api.theveloura.ir/api/register/", {
+      const res = await fetch("https://toys.theveloura.ir/api/register/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
