@@ -3,6 +3,7 @@ import Image from "next/image";
 import { getProducts } from "@/lib/api";
 import ProductCard from "@/components/product/ProductCard";
 import { ChevronLeft, Truck, ShieldCheck, Headphones, Star, Sparkles } from "lucide-react";
+import ProductsGrid from "@/components/product/ProductsGrid";
 
 export const dynamic = "force-dynamic";
 
@@ -42,7 +43,7 @@ const TRUST_BADGES = [
 
 export default async function HomePage() {
   const products = await getProducts();
-  const featured = products ? products.slice(0, 4) : [];
+  const featured = products ? products.slice(0, 24) : [];
 
   return (
     <main className="overflow-x-hidden">
@@ -95,7 +96,7 @@ export default async function HomePage() {
               <span className="relative z-10 text-xl group-hover:animate-wiggle">🚀</span>
             </Link>
 
-          
+
           </div>
         </div>
 
@@ -154,9 +155,8 @@ export default async function HomePage() {
             <Link
               key={collection.id}
               href={collection.href}
-              className={`group relative w-36 h-36 md:w-64 md:h-64 overflow-hidden block rounded-full shadow-card hover:shadow-product transition-all duration-300 hover:-translate-y-2 ${
-                i % 2 === 0 ? "hover:rotate-3" : "hover:-rotate-3"
-              }`}
+              className={`group relative w-36 h-36 md:w-64 md:h-64 overflow-hidden block rounded-full shadow-card hover:shadow-product transition-all duration-300 hover:-translate-y-2 ${i % 2 === 0 ? "hover:rotate-3" : "hover:-rotate-3"
+                }`}
             >
               <Image
                 src={collection.image}
@@ -197,11 +197,7 @@ export default async function HomePage() {
         </div>
 
         {featured.length > 0 ? (
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-3 gap-y-8 md:gap-8">
-            {featured.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
+          <ProductsGrid products={featured} />
         ) : (
           <div className="flex flex-col items-center justify-center text-center py-16 bg-white/60 rounded-3xl border-2 border-dashed border-inkSoft/20">
             <span className="text-5xl mb-3">🧸</span>
