@@ -96,7 +96,7 @@ export default async function BlogPostPage({ params }) {
             alt={post.title}
             fill
             sizes="(max-width: 768px) 100vw, 768px"
-            className="object-cover"
+            className="object-contain"
             priority
           />
         </div>

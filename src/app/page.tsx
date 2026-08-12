@@ -6,6 +6,7 @@ import { getBlogPosts } from "@/lib/api";
 import ProductsGrid from "@/components/product/ProductsGrid";
 import BlogCard from "@/components/blog/BlogCard";
 import { Product } from "@/types/api";
+import FaqSection from "@/components/home/FaqSection";
 import {
   ChevronLeft,
   Truck,
@@ -259,31 +260,6 @@ export default async function HomePage() {
         )}
       </section>
 
-      {/* BRAND STORY SECTION */}
-      <section className="relative bg-sky/15 py-12 md:py-24 overflow-hidden">
-        <div className="blob-decor w-48 h-48 bg-grass/30 -bottom-10 -left-10 animate-float-slow hidden md:block" />
-        <div className="blob-decor w-32 h-32 bg-bubblegum/20 top-0 -right-6 animate-float hidden md:block" />
-        <div className="max-w-3xl mx-auto text-center px-5 md:px-6 relative z-10">
-          <span className="text-5xl mb-4 inline-block animate-wiggle">🧸</span>
-          <h2 className="text-2xl md:text-4xl font-display font-extrabold text-ink mb-2">
-            چرا بچه‌ها <span className="text-grass">Veloura</span> رو دوست دارن؟
-          </h2>
-          <div className="w-16 md:w-40 h-1.5 bg-grass/60 mx-auto mb-6 md:mb-8 rounded-full"></div>
-          <p className="text-inkSoft leading-relaxed md:leading-loose text-sm md:text-lg font-medium mb-8">
-            هر اسباب‌بازی توی Veloura با دقت و عشق انتخاب شده تا هم امن باشه، هم بادوام و هم پر از خنده.
-            ما باور داریم بازی کردن مهم‌ترین قسمت بزرگ شدنه!
-          </p>
-
-          <Link
-            href="/shop"
-            className="btn-pop inline-flex items-center gap-2 rounded-full bg-grass text-white font-display font-bold px-8 py-3.5 hover:bg-grass/90 transition-colors"
-          >
-            شروع خرید
-            <ChevronLeft className="h-4 w-4" />
-          </Link>
-        </div>
-      </section>
-
       {/* BLOG TEASER SECTION - مقالات */}
       {latestPosts.length > 0 && (
         <section className="max-w-7xl mx-auto px-4 md:px-6 py-12 md:py-20">
@@ -315,6 +291,36 @@ export default async function HomePage() {
           </div>
         </section>
       )}
+
+      {/* FAQ SECTION */}
+      <FaqSection />
+
+      {/* BRAND STORY SECTION */}
+      <section className="relative bg-sky/15 py-12 md:py-24 overflow-hidden">
+        <div className="blob-decor w-48 h-48 bg-grass/30 -bottom-10 -left-10 animate-float-slow hidden md:block" />
+        <div className="blob-decor w-32 h-32 bg-bubblegum/20 top-0 -right-6 animate-float hidden md:block" />
+        <div className="max-w-3xl mx-auto text-center px-5 md:px-6 relative z-10">
+          <span className="text-5xl mb-4 inline-block animate-wiggle">🧸</span>
+          <h2 className="text-2xl md:text-4xl font-display font-extrabold text-ink mb-2">
+            چرا بچه‌ها <span className="text-grass">Veloura</span> رو دوست دارن؟
+          </h2>
+          <div className="w-16 md:w-40 h-1.5 bg-grass/60 mx-auto mb-6 md:mb-8 rounded-full"></div>
+          <p className="text-inkSoft leading-relaxed md:leading-loose text-sm md:text-lg font-medium mb-8">
+            هر اسباب‌بازی توی Veloura با دقت و عشق انتخاب شده تا هم امن باشه، هم بادوام و هم پر از خنده.
+            ما باور داریم بازی کردن مهم‌ترین قسمت بزرگ شدنه!
+          </p>
+
+          <Link
+            href="/shop"
+            className="btn-pop inline-flex items-center gap-2 rounded-full bg-grass text-white font-display font-bold px-8 py-3.5 hover:bg-grass/90 transition-colors"
+          >
+            شروع خرید
+            <ChevronLeft className="h-4 w-4" />
+          </Link>
+        </div>
+      </section>
+
+      
     </main>
   );
 }
@@ -323,7 +329,9 @@ export default async function HomePage() {
 // کارت ساده برای ردیف افقی "تازه از راه رسیده"
 function ProductCardMini({ product }: { product: Product }) {
   const firstImage =
-    product.images?.length > 0 ? product.images[0].image : product.image;
+    product.images?.length > 0
+      ? product.images[0].image
+      : product.image;
 
   const imageSrc =
     firstImage?.startsWith("http") || firstImage?.startsWith("/")
@@ -333,31 +341,140 @@ function ProductCardMini({ product }: { product: Product }) {
   return (
     <Link
       href={`/product/${product.slug}`}
-      className="block bg-white rounded-2xl overflow-hidden shadow-card hover:shadow-product transition-all duration-300 hover:-translate-y-1"
+      className="
+        group relative block overflow-hidden
+        rounded-2xl bg-white
+        shadow-card
+        transition-all duration-500 ease-out
+        hover:-translate-y-2
+        hover:shadow-product
+      "
     >
-      <div className="relative aspect-square bg-sunny/10">
+      {/* Image */}
+      <div className="relative aspect-square overflow-hidden bg-sunny/10">
         <Image
           src={imageSrc}
           alt={product.name}
           fill
           sizes="200px"
-          className="object-cover"
+          className="
+            object-cover
+            transition-transform duration-700 ease-out
+            group-hover:scale-110
+          "
         />
 
-        <span className="absolute top-2 right-2 bg-sunny text-ink text-[10px] font-extrabold px-2 py-0.5 rounded-full">
+        {/* Gradient Overlay */}
+        <div
+          className="
+            absolute inset-0
+            bg-gradient-to-t
+            from-black/20 via-transparent to-transparent
+            opacity-0
+            transition-opacity duration-500
+            group-hover:opacity-100
+          "
+        />
+
+        {/* Shine Effect */}
+        <div
+          className="
+            absolute inset-0
+            -translate-x-full
+            bg-gradient-to-r
+            from-transparent via-white/30 to-transparent
+            skew-x-[-20deg]
+            transition-transform duration-1000
+            group-hover:translate-x-full
+          "
+        />
+
+        {/* New Badge */}
+        <span
+          className="
+            absolute top-2 right-2
+            rounded-full
+            bg-sunny
+            px-2.5 py-1
+            text-[10px] font-extrabold text-ink
+            shadow-sm
+            transition-all duration-300
+            group-hover:scale-110
+            group-hover:-rotate-3
+          "
+        >
           جدید
         </span>
+
+        {/* Floating View Button */}
+        <div
+          className="
+            absolute bottom-3 left-1/2
+            flex h-9 w-9
+            -translate-x-1/2 translate-y-4
+            items-center justify-center
+            rounded-full bg-white/95
+            shadow-lg
+            opacity-0
+            transition-all duration-500
+            group-hover:translate-y-0
+            group-hover:opacity-100
+          "
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            className="h-4 w-4 text-ink"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M2.25 12s3.75-6.75 9.75-6.75S21.75 12 21.75 12 18 18.75 12 18.75 2.25 12 2.25 12Z"
+            />
+            <circle cx="12" cy="12" r="2.5" />
+          </svg>
+        </div>
       </div>
 
+      {/* Content */}
       <div className="p-3">
-        <h3 className="text-xs md:text-sm font-bold text-ink line-clamp-1 mb-1">
+        <h3
+          className="
+            mb-1 line-clamp-1
+            text-xs font-bold text-ink md:text-sm
+            transition-colors duration-300
+            group-hover:text-bubblegum
+          "
+        >
           {product.name}
         </h3>
 
-        <p className="text-xs md:text-sm font-display text-bubblegum font-bold">
+        <p
+          className="
+            text-xs font-bold font-display text-bubblegum
+            md:text-sm
+            transition-all duration-300
+            group-hover:translate-x-1
+          "
+        >
           {Number(product.price).toLocaleString("fa-IR")} تومان
         </p>
       </div>
+
+      {/* Bottom Accent */}
+      <div
+        className="
+          absolute bottom-0 left-1/2
+          h-1 w-0
+          -translate-x-1/2
+          rounded-full bg-bubblegum
+          transition-all duration-500
+          group-hover:w-1/2
+        "
+      />
     </Link>
   );
 }
