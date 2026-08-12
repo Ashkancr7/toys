@@ -1,17 +1,29 @@
+// app/page.jsx
 import Link from "next/link";
 import Image from "next/image";
 import { getProducts } from "@/lib/api";
-import ProductCard from "@/components/product/ProductCard";
-import { ChevronLeft, Truck, ShieldCheck, Headphones, Star, Sparkles } from "lucide-react";
+import { getBlogPosts } from "@/lib/api";
 import ProductsGrid from "@/components/product/ProductsGrid";
+import BlogCard from "@/components/blog/BlogCard";
+import { Product } from "@/types/api";
+import {
+  ChevronLeft,
+  Truck,
+  ShieldCheck,
+  Headphones,
+  Star,
+  Sparkles,
+  BookOpen,
+} from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
+// TODO: در آینده تعداد محصول هر دسته رو از API واقعی (getCategories) بگیرید
 const COLLECTIONS = [
-  { id: 1, title: "عروسک و پولیشی", image: "/cat1.webp", href: "/shop" },
-  { id: 2, title: "بازی‌های فکری", image: "/cat3.webp", href: "/shop" },
-  { id: 3, title: "ماشین و ربات", image: "/cat2.webp", href: "/shop" },
-  { id: 4, title: "خلاقیت و هنر", image: "/cat4.webp", href: "/shop" },
+  { id: 1, title: "عروسک و پولیشی", image: "/cat1.webp", href: "/shop?category=dolls", count: 86 },
+  { id: 2, title: "بازی‌های فکری", image: "/cat3.webp", href: "/shop?category=puzzles", count: 54 },
+  { id: 3, title: "ماشین و ربات", image: "/cat2.webp", href: "/shop?category=cars", count: 71 },
+  { id: 4, title: "خلاقیت و هنر", image: "/cat4.webp", href: "/shop?category=art", count: 39 },
 ];
 
 const TRUST_BADGES = [
@@ -42,14 +54,20 @@ const TRUST_BADGES = [
 ];
 
 export default async function HomePage() {
-  const products = await getProducts();
-  const featured = products ? products.slice(0, 24) : [];
+  const [products, blogPosts] = await Promise.all([
+    getProducts(),
+    getBlogPosts().catch(() => []),
+  ]);
+
+  const allProducts = products || [];
+  const newArrivals = allProducts.slice(0, 8);
+  const featured = allProducts.slice(0, 24);
+  const latestPosts = (blogPosts || []).slice(0, 3);
 
   return (
     <main className="overflow-x-hidden">
       {/* HERO SECTION */}
       <section className="relative min-h-[85vh] md:min-h-[95vh] flex items-center justify-center text-center bg-gradient-to-b from-sky/25 via-cream to-cream overflow-hidden">
-        {/* بلاب‌های رنگی شناور - عنصر امضای طراحی */}
         <div className="blob-decor w-40 h-40 md:w-64 md:h-64 bg-sunny/50 top-10 -left-10 animate-float-slow" />
         <div className="blob-decor w-32 h-32 md:w-52 md:h-52 bg-bubblegum/40 bottom-16 -right-10 animate-float" />
         <div className="blob-decor w-24 h-24 md:w-36 md:h-36 bg-grass/40 top-1/3 right-10 hidden md:block animate-float-slow" />
@@ -75,7 +93,6 @@ export default async function HomePage() {
             هر چیزی که بچه‌های شما آرزوشو دارن، اینجاست.
           </p>
 
-          {/* نشانه اعتماد کوچک زیر متن هیرو */}
           <div className="flex items-center gap-1.5 mb-8 text-sm text-inkSoft font-medium">
             <div className="flex -space-x-1">
               {[1, 2, 3].map((s) => (
@@ -85,22 +102,15 @@ export default async function HomePage() {
             <span>محبوب هزاران خانواده در سراسر ایران</span>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-center gap-4">
-            <Link
-              href="/shop"
-              className="btn-pop group relative rounded-full inline-flex items-center justify-center gap-2 px-10 py-4 md:px-14 md:py-5 bg-bubblegum text-white font-display font-bold overflow-hidden hover:bg-[#ff5c82] transition-colors"
-            >
-              <span className="relative z-10 text-base md:text-lg">
-                بریم بازی کنیم!
-              </span>
-              <span className="relative z-10 text-xl group-hover:animate-wiggle">🚀</span>
-            </Link>
-
-
-          </div>
+          <Link
+            href="/shop"
+            className="btn-pop group relative rounded-full inline-flex items-center justify-center gap-2 px-10 py-4 md:px-14 md:py-5 bg-bubblegum text-white font-display font-bold overflow-hidden hover:bg-[#ff5c82] transition-colors"
+          >
+            <span className="relative z-10 text-base md:text-lg">بریم بازی کنیم!</span>
+            <span className="relative z-10 text-xl group-hover:animate-wiggle">🚀</span>
+          </Link>
         </div>
 
-        {/* جداکننده موجی زیر هیرو */}
         <div className="wave-divider absolute bottom-0 left-0 right-0">
           <svg viewBox="0 0 1440 60" preserveAspectRatio="none">
             <path
@@ -113,22 +123,22 @@ export default async function HomePage() {
 
       {/* TRUST BADGES SECTION */}
       <section className="max-w-7xl mx-auto px-4 md:px-6 -mt-2 md:-mt-6 relative z-10">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
           {TRUST_BADGES.map((badge) => {
             const Icon = badge.icon;
             return (
               <div
                 key={badge.title}
-                className="flex flex-col md:flex-row items-center md:items-start gap-2 md:gap-4 bg-white rounded-3xl p-4 md:p-5 shadow-card text-center md:text-right"
+                className="flex items-center gap-3 bg-white rounded-2xl md:rounded-3xl p-3 md:p-5 shadow-card text-right"
               >
-                <div className={`shrink-0 w-11 h-11 md:w-12 md:h-12 rounded-2xl flex items-center justify-center ${badge.color}`}>
-                  <Icon className="h-5 w-5 md:h-6 md:w-6" />
+                <div className={`shrink-0 w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl flex items-center justify-center ${badge.color}`}>
+                  <Icon className="h-4.5 w-4.5 md:h-6 md:w-6" />
                 </div>
-                <div>
-                  <h3 className="font-display font-bold text-ink text-sm md:text-base">
+                <div className="min-w-0">
+                  <h3 className="font-display font-bold text-ink text-xs md:text-base leading-tight">
                     {badge.title}
                   </h3>
-                  <p className="text-inkSoft text-xs md:text-sm mt-0.5 hidden md:block">
+                  <p className="text-inkSoft text-[10px] md:text-sm mt-0.5 leading-tight line-clamp-1">
                     {badge.desc}
                   </p>
                 </div>
@@ -139,7 +149,7 @@ export default async function HomePage() {
       </section>
 
       {/* COLLECTIONS SECTION */}
-      <section className="max-w-7xl mx-auto px-4 md:px-6 py-12 md:py-20">
+      <section className="max-w-7xl mx-auto px-4 md:px-6 py-10 md:py-20">
         <div className="text-center mb-8 md:mb-14">
           <h2 className="text-2xl md:text-4xl font-display font-extrabold text-ink">
             دسته‌بندی <span className="text-sky">بازی‌ها</span> 🎲
@@ -150,35 +160,76 @@ export default async function HomePage() {
           <div className="w-16 md:w-40 h-1.5 bg-sky/60 mx-auto mt-3 md:mt-4 rounded-full"></div>
         </div>
 
-        <div className="flex flex-wrap justify-center gap-5 md:gap-12">
+        <div className="flex flex-wrap justify-center gap-6 md:gap-12">
           {COLLECTIONS.map((collection, i) => (
             <Link
               key={collection.id}
               href={collection.href}
-              className={`group relative w-36 h-36 md:w-64 md:h-64 overflow-hidden block rounded-full shadow-card hover:shadow-product transition-all duration-300 hover:-translate-y-2 ${i % 2 === 0 ? "hover:rotate-3" : "hover:-rotate-3"
-                }`}
+              className="group flex flex-col items-center gap-3"
             >
-              <Image
-                src={collection.image}
-                alt={`دسته ${collection.title}`}
-                fill
-                sizes="(max-width: 768px) 150px, 250px"
-                className="object-cover transition-transform duration-700 group-hover:scale-110"
-              />
-              <div className="absolute inset-0 bg-ink/25 transition-all duration-300 group-hover:bg-ink/35" />
-
-              <div className="absolute inset-0 p-4 flex items-center justify-center text-center">
-                <h3 className="text-white text-lg md:text-2xl font-display font-bold drop-shadow-md">
-                  {collection.title}
-                </h3>
+              <div
+                className={`relative w-32 h-32 md:w-64 md:h-64 overflow-hidden block rounded-full shadow-card hover:shadow-product transition-all duration-300 hover:-translate-y-2 ${
+                  i % 2 === 0 ? "group-hover:rotate-3" : "group-hover:-rotate-3"
+                }`}
+              >
+                <Image
+                  src={collection.image}
+                  alt={`دسته ${collection.title}`}
+                  fill
+                  sizes="(max-width: 768px) 150px, 250px"
+                  className="object-cover transition-transform duration-700 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-ink/25 transition-all duration-300 group-hover:bg-ink/35" />
+                <div className="absolute inset-0 p-4 flex items-center justify-center text-center">
+                  <h3 className="text-white text-base md:text-2xl font-display font-bold drop-shadow-md">
+                    {collection.title}
+                  </h3>
+                </div>
               </div>
+
+              {collection.count && (
+                <span className="text-xs md:text-sm font-bold text-inkSoft bg-white px-3 py-1 rounded-full shadow-popSm group-hover:text-bubblegum transition-colors">
+                  {collection.count.toLocaleString("fa-IR")} محصول
+                </span>
+              )}
             </Link>
           ))}
         </div>
       </section>
 
+      {/* NEW ARRIVALS SECTION - جدیدترین‌ها */}
+      {newArrivals.length > 0 && (
+        <section className="bg-sunny/10 py-10 md:py-16">
+          <div className="max-w-7xl mx-auto px-4 md:px-6">
+            <div className="flex items-center justify-between mb-6 md:mb-10">
+              <div>
+                <h2 className="text-xl md:text-3xl font-display font-extrabold text-ink">
+                  تازه از راه رسیده 🆕
+                </h2>
+                <div className="w-14 md:w-32 h-1.5 bg-sunny mt-2 rounded-full"></div>
+              </div>
+              <Link
+                href="/shop?sort=newest"
+                className="text-xs md:text-sm font-bold text-ink hover:text-bubblegum flex items-center gap-1 shrink-0"
+              >
+                همه جدیدها
+                <ChevronLeft className="h-4 w-4" />
+              </Link>
+            </div>
+
+            <div className="flex gap-4 overflow-x-auto pb-2 -mx-4 px-4 md:mx-0 md:px-0 scrollbar-hide snap-x snap-mandatory">
+              {newArrivals.map((product) => (
+                <div key={product.id} className="w-40 md:w-56 shrink-0 snap-start">
+                  <ProductCardMini product={product} />
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* FEATURED PRODUCTS SECTION */}
-      <section className="max-w-7xl mx-auto px-4 md:px-6 py-12 md:py-20">
+      <section className="max-w-7xl mx-auto px-4 md:px-6 py-10 md:py-20">
         <div className="flex flex-col md:flex-row items-center md:items-end justify-between mb-8 md:mb-14 gap-6">
           <div>
             <h2 className="text-2xl md:text-4xl font-display font-extrabold text-ink">
@@ -209,7 +260,7 @@ export default async function HomePage() {
       </section>
 
       {/* BRAND STORY SECTION */}
-      <section className="relative bg-sky/15 py-14 md:py-24 overflow-hidden">
+      <section className="relative bg-sky/15 py-12 md:py-24 overflow-hidden">
         <div className="blob-decor w-48 h-48 bg-grass/30 -bottom-10 -left-10 animate-float-slow hidden md:block" />
         <div className="blob-decor w-32 h-32 bg-bubblegum/20 top-0 -right-6 animate-float hidden md:block" />
         <div className="max-w-3xl mx-auto text-center px-5 md:px-6 relative z-10">
@@ -232,6 +283,81 @@ export default async function HomePage() {
           </Link>
         </div>
       </section>
+
+      {/* BLOG TEASER SECTION - مقالات */}
+      {latestPosts.length > 0 && (
+        <section className="max-w-7xl mx-auto px-4 md:px-6 py-12 md:py-20">
+          <div className="flex flex-col md:flex-row items-center md:items-end justify-between mb-8 md:mb-14 gap-6">
+            <div className="text-center md:text-right">
+              <span className="inline-flex items-center gap-1.5 text-xs md:text-sm font-bold text-sky mb-2">
+                <BookOpen className="h-4 w-4" />
+                مجله ولورا
+              </span>
+              <h2 className="text-2xl md:text-4xl font-display font-extrabold text-ink">
+                راهنمای <span className="text-sky">والدین</span> و بازی 📖
+              </h2>
+              <div className="w-16 md:w-40 h-1.5 bg-sky/60 mt-2 md:mt-3 rounded-full mx-auto md:mx-0"></div>
+            </div>
+
+            <Link
+              href="/blog"
+              className="btn-pop group relative inline-flex items-center gap-2 rounded-full bg-white border-2 border-sky px-6 py-3 text-sm font-extrabold text-ink hover:bg-sky/20 transition-colors duration-300"
+            >
+              <span>همه مقالات</span>
+              <ChevronLeft className="h-4 w-4 transition-all duration-300 group-hover:-translate-x-1" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+            {latestPosts.map((post) => (
+              <BlogCard key={post.id} post={post} />
+            ))}
+          </div>
+        </section>
+      )}
     </main>
+  );
+}
+
+// کارت ساده برای ردیف افقی "تازه از راه رسیده"
+// کارت ساده برای ردیف افقی "تازه از راه رسیده"
+function ProductCardMini({ product }: { product: Product }) {
+  const firstImage =
+    product.images?.length > 0 ? product.images[0].image : product.image;
+
+  const imageSrc =
+    firstImage?.startsWith("http") || firstImage?.startsWith("/")
+      ? firstImage
+      : `/${firstImage || "placeholder.png"}`;
+
+  return (
+    <Link
+      href={`/product/${product.slug}`}
+      className="block bg-white rounded-2xl overflow-hidden shadow-card hover:shadow-product transition-all duration-300 hover:-translate-y-1"
+    >
+      <div className="relative aspect-square bg-sunny/10">
+        <Image
+          src={imageSrc}
+          alt={product.name}
+          fill
+          sizes="200px"
+          className="object-cover"
+        />
+
+        <span className="absolute top-2 right-2 bg-sunny text-ink text-[10px] font-extrabold px-2 py-0.5 rounded-full">
+          جدید
+        </span>
+      </div>
+
+      <div className="p-3">
+        <h3 className="text-xs md:text-sm font-bold text-ink line-clamp-1 mb-1">
+          {product.name}
+        </h3>
+
+        <p className="text-xs md:text-sm font-display text-bubblegum font-bold">
+          {Number(product.price).toLocaleString("fa-IR")} تومان
+        </p>
+      </div>
+    </Link>
   );
 }
